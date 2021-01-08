@@ -8,4 +8,4 @@ Data is passed to the application through a .csv file. The format of this should
 
 `account_number`,`company`,`street` (`street_number`)
 
-See [sample.csv](sample.csv) for an example.
+See [sample.csv](examples/sample.csv) for an example.

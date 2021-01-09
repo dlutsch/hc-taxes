@@ -113,7 +113,11 @@ if __name__ == '__main__':
                 progress = 0
                 sg.OneLineProgressMeter('Download Progress', progress, row_count, 'dl')
                 for row in reader:
-                    account_number, _, address = row[0], row[1], row[2]
+                    try:
+                        account_number, _, address = row[0], row[1], row[2]
+                    except IndexError:
+                        logging.critical('malformed csv file')
+                        exit(1)
                     if account_number:
                         progress += 1
                         logging.info(f'Retrieving data for: {account_number}...')

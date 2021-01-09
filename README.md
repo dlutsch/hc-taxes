@@ -12,4 +12,4 @@ See [sample.csv](example/sample.csv) for an example.
 
 ## Requirements
 
-Chrome driver: https://chromedriver.chromium.org/downloads
+Chrome driver matching your browser version: https://chromedriver.chromium.org/downloads

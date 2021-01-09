@@ -9,3 +9,7 @@ Data is passed to the application through a .csv file. The format of this should
 `account_number`,`company`,`street` (`street_number`)
 
 See [sample.csv](example/sample.csv) for an example.
+
+## Requirements
+
+Chrome driver: https://chromedriver.chromium.org/downloads

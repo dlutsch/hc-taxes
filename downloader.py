@@ -76,7 +76,13 @@ def download(account_number, address, output_csv, pdf_dir, driver):
     # TODO: Make proper wait for page to load
     time.sleep(2)
 
-    print_button = driver.find_element_by_class_name('StatementPrint')
+    title = driver.find_element_by_class_name('ContentTitle')
+    if 'Delinquent' in title.text:
+        logging.critical(f'account {account_number} is Delinquent')
+        with open(output_csv, 'a') as t:
+            mywriter = csv.writer(t)
+            mywriter.writerow([account_number, address, "DELINQUENT"])
+        return
 
     # Find the tax amount
     table = driver.find_element_by_class_name('tot')
@@ -104,6 +110,7 @@ def download(account_number, address, output_csv, pdf_dir, driver):
                       "(KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
     }
 
+    print_button = driver.find_element_by_class_name('StatementPrint')
     data = requests.get(print_button.get_attribute('href'), headers=fake_agent_header)
 
     if data.status_code != 200:

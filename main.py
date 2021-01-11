@@ -45,18 +45,18 @@ def init_gui():
         [sg.OK(), sg.Cancel()]
     ]
     # Testing
-    layout = [
-        [sg.Text('Input CSV', size=(10, 1)), sg.Input(default_text='/Users/dlutsch/Desktop/sample2.csv', key='-INPUT-', change_submits=True),
-         sg.FileBrowse(key='-INPUT_BROWSE-', file_types=(("CSV Files", "*.csv"),))],
-        [sg.Text('PDF Output', size=(10, 1)), sg.Input(default_text='/Users/dlutsch/Desktop/pdf', key='-PDF_DIR-', change_submits=True),
-         sg.FolderBrowse(key='-INPUT_BROWSE-')],
-        [sg.Text('Chromedriver', size=(10, 1)), sg.Input(default_text='/Users/dlutsch/chromedriver',key='-DRIVER-', change_submits=True),
-         sg.FileBrowse(key='-DRIVER_BROWSE-', file_types=(("EXE Files", "*.exe"),))],
-        [sg.Text('Run in Background', size=(15, 1)), sg.Radio('True', "BGRADIO", default=True, key='-HEADLESS-'),
-         sg.Radio('False', "BGRADIO")],
-        [sg.MLine(key='-OUTPUT-' + sg.WRITE_ONLY_KEY, size=(70, 20))],
-        [sg.OK(), sg.Cancel()]
-    ]
+    # layout = [
+    #     [sg.Text('Input CSV', size=(10, 1)), sg.Input(default_text='/Users/dlutsch/Desktop/sample2.csv', key='-INPUT-', change_submits=True),
+    #      sg.FileBrowse(key='-INPUT_BROWSE-', file_types=(("CSV Files", "*.csv"),))],
+    #     [sg.Text('PDF Output', size=(10, 1)), sg.Input(default_text='/Users/dlutsch/Desktop/pdf', key='-PDF_DIR-', change_submits=True),
+    #      sg.FolderBrowse(key='-INPUT_BROWSE-')],
+    #     [sg.Text('Chromedriver', size=(10, 1)), sg.Input(default_text='/Users/dlutsch/chromedriver',key='-DRIVER-', change_submits=True),
+    #      sg.FileBrowse(key='-DRIVER_BROWSE-', file_types=(("EXE Files", "*.exe"),))],
+    #     [sg.Text('Run in Background', size=(15, 1)), sg.Radio('True', "BGRADIO", default=True, key='-HEADLESS-'),
+    #      sg.Radio('False', "BGRADIO")],
+    #     [sg.MLine(key='-OUTPUT-' + sg.WRITE_ONLY_KEY, size=(70, 20))],
+    #     [sg.OK(), sg.Cancel()]
+    # ]
 
     return sg.Window('Harris County Property Tax Downloader', layout)
 
@@ -77,11 +77,11 @@ class Handler(logging.StreamHandler):
         window.Refresh()
 
 
-def config_logging(log_file):
+def config_logging():
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s, [%(levelname)s], %(message)s',
-        filename=log_file+".log",
+        filename='hc-proptax.log',
         filemode='w')
 
     ch = Handler()
@@ -102,7 +102,7 @@ if __name__ == '__main__':
             pdf_dir = values['-PDF_DIR-']
             window['-OUTPUT-' + sg.WRITE_ONLY_KEY].update("")
             output_file = get_output_filepath(values['-INPUT-'])
-            config_logging(output_file)
+            config_logging()
             logging.info(f'OUTPUT FILE: {output_file}')
             window.Refresh()
 

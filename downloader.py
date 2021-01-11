@@ -40,10 +40,19 @@ def get_pdf_filepath(street_name, street_number, pdf_dir):
     return filepath
 
 
+# TODO: This is making an extra newline between each entry on Windows Excel. Why?
+def write_to_csv(output_csv, fields):
+    with open(output_csv, 'a') as t:
+        writer = csv.writer(t)
+        writer.writerow(fields)
+
+
 def download(account_number, address, output_csv, pdf_dir, driver):
     """
     Retrieves property tax data from www.hctax.net for a given property, and downloads the relevant pdf statement.
     """
+
+    output_csv_fields = [account_number, address]
 
     street_name, street_number = get_address_name_number(address)
 
@@ -71,6 +80,8 @@ def download(account_number, address, output_csv, pdf_dir, driver):
 
     if not matched:
         logging.critical(f'Unable to find match for account {account_number} - skipping')
+        output_csv_fields.append('NO MATCHING ACCOUNT')
+        write_to_csv(output_csv, output_csv_fields)
         return
 
     # TODO: Make proper wait for page to load
@@ -79,9 +90,8 @@ def download(account_number, address, output_csv, pdf_dir, driver):
     title = driver.find_element_by_class_name('ContentTitle')
     if 'Delinquent' in title.text:
         logging.critical(f'account {account_number} is Delinquent')
-        with open(output_csv, 'a') as t:
-            mywriter = csv.writer(t)
-            mywriter.writerow([account_number, address, "DELINQUENT"])
+        output_csv_fields.append('DELINQUENT')
+        write_to_csv(output_csv, output_csv_fields)
         return
 
     # Find the tax amount
@@ -94,15 +104,13 @@ def download(account_number, address, output_csv, pdf_dir, driver):
 
     if not tax_amount:
         logging.critical(f'Failure retrieving tax amount for account {account_number}')
+        output_csv_fields.append('MISSING TAX AMOUNT')
+        write_to_csv(output_csv, output_csv_fields)
         return
 
     # Write the tax amount to second csv
-    fields = [account_number, address, tax_amount]
-
-    # TODO: This is making an extra newline between each entry, fix that.
-    with open(output_csv, 'a') as t:
-        mywriter = csv.writer(t)
-        mywriter.writerow(fields)
+    output_csv_fields.append(tax_amount)
+    write_to_csv(output_csv, output_csv_fields)
 
     # Download the pdf
     fake_agent_header = {
@@ -116,6 +124,7 @@ def download(account_number, address, output_csv, pdf_dir, driver):
     if data.status_code != 200:
         logging.error(
             f'Unable to download PDF report for account {account_number}\n{data.status_code}, {data.content}')
+        return
 
     pdf_filepath = get_pdf_filepath(street_name, street_number, pdf_dir)
     with open(pdf_filepath, 'wb') as output:

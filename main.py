@@ -117,13 +117,15 @@ if __name__ == '__main__':
                         account_number, _, address = row[0], row[1], row[2]
                     except IndexError:
                         logging.critical('malformed csv file')
-                        exit(1)
+                        sg.OneLineProgressMeter('Download Progress', row_count, row_count, 'dl')
+                        break
                     if account_number:
                         progress += 1
                         logging.info(f'Retrieving data for: {account_number}...')
                         download(account_number, address, output_file, pdf_dir, driver)
                         sg.OneLineProgressMeter('Download Progress', progress, row_count, 'dl')
 
-            logging.info('Download complete!')
+            if progress:
+                logging.info('Download complete!')
 
     window.close()
